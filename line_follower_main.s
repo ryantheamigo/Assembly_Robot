@@ -4,9 +4,9 @@
 .include "timer_and_interrupt_lib.s"
     
 .data
-    drive_case:	.word default, right, default, left, default, slant_right
+    drive_case:	.word default, rotate_right, default, rotate_left, default, slant_right
 		.word default, default, rotate_left, default, slant_left
-		.word slant_left, rotate_Right, slant_right, default, default
+		.word slant_left, rotate_right, slant_right, default, default
     
 .text
     
@@ -37,7 +37,7 @@ movement:
     la $t1, drive_case
     sll $t0, $t0, 2	# multiplies index by 4
     add $t1, $t0, $t1	# offsets index
-    lw $t0, $t1		# loads jump value
+    lw $t0, 0($t1)		# loads jump value
     jr $t1
     
     # goes forward as a default
@@ -53,7 +53,7 @@ movement:
     lw $a1, 80
     jal write_to_motors
     
-    j endMovement
+    j end_movement
     
     slant_right:
     # sets wheels to forward
