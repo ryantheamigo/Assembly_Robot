@@ -63,8 +63,8 @@ movement:
     sw $t0, LATDCLR
 
     # sets to 68% and 69% duty cycle
-    li $a0, 70
-    li $a1, 71
+    li $a0, 68
+    li $a1, 69
     jal write_to_motors
     j end_movement
     
