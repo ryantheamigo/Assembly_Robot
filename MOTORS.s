@@ -1,5 +1,7 @@
 .ifndef MOTORS
     MOTORS:
+	# Left Motor JD Top
+	# Right Motor JD Bottom
 	# writes to motors individually
 	# a0 - duty cylce of right motor
 	# a1 - duty cycle of left motor
@@ -82,7 +84,7 @@
 	    JR $ra
 	.end motor_timer
 	
-	.ent left_motor
+    .ent left_motor
 	left_motor:
 	# Setup output compare 2 
 	# 1) Set the corresponding TRIS pins as outputs
@@ -515,5 +517,7 @@
 #     ERET 
 # .end input_capture_handler_3
 .endif
+    
+    
 
 

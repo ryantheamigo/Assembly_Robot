@@ -5,30 +5,30 @@
 	ADDI $sp, $sp, -4
 	SW $ra, 0($sp)
 	
-	LI $t0, 15 << 4 # Set pins RE4, RE5, RE6, RE7 as input
-	SW $t0, TRISECLR
-	SW $t0, TRISESET
+	LI $t0, 15 << 12 # Set pins RG12, RG13, RG14, RG15 as input
+	SW $t0, TRISGCLR
+	SW $t0, TRISGSET
 	
 	LW $ra, 0($sp)
 	ADDI $sp, $sp, 4
 	JR $ra
     .end setup_sensor
     
-    .ent read_sensor
-	read_sensor:
+    .ent READ_SENSOR
+	READ_SENSOR:
 	ADDI $sp, $sp, -4
 	SW $ra, 0($sp)
 	
-	LW $t0, PORTE # Read PORTE
-	LI $t1, 15 << 4 # Load and value
-	AND $t0, $t0, $t1 # Mask of the bits 4,5,6,7
-	SRL $t0, $t0, 4 # Shift to first four bits
-	MOVE $v0, $t0 # Move to $v0
+	LW $t0, PORTG # Read PORTE
+	LI $t1, 15 << 12 # Load and value
+	AND $t0, $t0, $t1 # Mask of the bits 12,13,14,15
+	SRL $t0, $t0, 12 # Shift to first four bits
+	MOVE $s0, $t0 # Move to $v0
 	
 	LW $ra, 0($sp)
 	ADDI $sp, $sp, 4
 	JR $ra
-    .end read_sensor	
+    .end READ_SENSOR	
  .endif 
 
 
