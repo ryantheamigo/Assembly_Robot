@@ -213,9 +213,14 @@
     JR $ra
  .end execute
  
- # ************************************************************************************************88
+ # *****************************************************************************************
  # Functions Used to get Bluetooth instructions
  # places instructions in corresponing spot in array
+ # 
+ # Gets ASCII value from UART input and converts to HEX, places in instruction array
+ # *****************************************************************************************
+ 
+ 
 .ent place_instructions
 place_instructions:
     # pushes to stack
