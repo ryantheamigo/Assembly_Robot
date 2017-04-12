@@ -1,6 +1,7 @@
 .ifndef ControlOperations
     ControlOperations: 
        .include "MOTORS.s"
+       .include "LCD.s"
 	.ent ROBO_LEFT
 	    ROBO_LEFT:
 	    addi $sp, $sp, -4
@@ -19,7 +20,8 @@
 	    sra $a1, $a1, 8
 
 	    jal write_to_motors
-
+	    JAL display_motors
+	    
 	    lw $ra, 0($sp)
 	    addi $sp, $sp, 4
 
@@ -44,7 +46,8 @@
 	    sra $a1, $a1, 8
 
 	    jal write_to_motors
-
+	    JAL display_motors
+	    
 	    lw $ra, 0($sp)
 	    addi $sp, $sp, 4
 
@@ -71,7 +74,8 @@
 	    sra $a1, $a1, 8
 
 	    jal write_to_motors
-
+ 	    JAL display_motors
+	    
 	    lw $ra, 0($sp)
 	    addi $sp, $sp, 4
 
@@ -98,7 +102,8 @@
 	    sra $a1, $a1, 8
 
 	    jal write_to_motors
-
+	    JAL display_motors
+	    
 	    lw $ra, 0($sp)
 	    addi $sp, $sp, 4
 
@@ -123,18 +128,20 @@
 	    SW $t0, T4CONSET
 
 	    LI $t1, 1
-	    # Loop will continue until interrupr sets the $t1 = 0
+	    # Loop will continue until interrupt sets the $t1 = 0
 	    while_c:
 	    BEQZ $t1, end_delay_c
 	    NOP
 	    J while_c
 
 	    end_delay_c:
-
+	    
 	    # Turn off timer 4
 	    LI $t0, 1 << 15
 	    SW $t0, T4CONCLR
-
+	    
+	    JAL clear_LCD
+	    
 	    LW  $ra, 0($sp)
 	    ADD $sp, $sp, 4
 	    JR $ra
