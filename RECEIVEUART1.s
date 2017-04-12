@@ -13,7 +13,8 @@
 	
 	endreceive:
 	LB $v0, U1RXREG
-	
+	LI $t0, 32
+	BEQ $v0, $t0, waittoreceive # Ignore character 
 	LW $ra, 0($sp)
 	ADDI $sp, $sp, 4
 	JR $ra

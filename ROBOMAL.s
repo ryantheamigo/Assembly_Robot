@@ -47,18 +47,18 @@
     # *																		    
     # *| HEX-VALUES |   FAMILY    |  OPERATION													    
     # *    110000       control_ops   ROBO_LEFT													    
-    # *    102000       control_ops   ROBO_RIGHT													    
-    # *    103000       control_ops   ROBO_FORWARD												    
-    # *    104000       control_ops   ROBO_BACKWARD												    
-    # *    105000       control_ops   ROBO_BRAKE													    
-    # *    201000       branch_ops    ROBO_JUMP													    
-    # *    202000       branch_ops    ROBO_BEQZ													    
-    # *    203000       branch_ops    ROBO_BNEZ													    
-    # *    204000       branch_ops    ROBO_HALT													    
+    # *    120000       control_ops   ROBO_RIGHT													    
+    # *    130000       control_ops   ROBO_FORWARD												    
+    # *    140000       control_ops   ROBO_BACKWARD												    
+    # *    150000       control_ops   ROBO_BRAKE													    
+    # *    210000       branch_ops    ROBO_JUMP													    
+    # *    220000       branch_ops    ROBO_BEQZ													    
+    # *    230000       branch_ops    ROBO_BNEZ													    
+    # *    240000       branch_ops    ROBO_HALT													    
     # * etc......																    
     # ***********************************************************************************************************************************************
     program_counter: .word 0
-    instructions:.word 0
+    instructions:.space 200
     
     control_ops: .word ROBO_LEFT, ROBO_RIGHT, ROBO_FORWARD, ROBO_BACKWARD, ROBO_BRAKE, READ_SENSOR
     branch_ops: .word ROBO_JUMP, ROBO_BEQZ, ROBO_BNEZ, ROBO_HALT
@@ -79,7 +79,12 @@
 	JAL setup_UART1
 	JAL setup_UART2
 	
+	upload:
+	# a3 = address of upload 
+	LA $a3, upload
+	SW $zero, program_counter
 	JAL place_instructions
+	NOP
 	
 	
 	while:
@@ -213,9 +218,14 @@
     JR $ra
  .end execute
  
- # ************************************************************************************************88
+ # *****************************************************************************************
  # Functions Used to get Bluetooth instructions
  # places instructions in corresponing spot in array
+ # 
+ # Gets ASCII value from UART input and converts to HEX, places in instruction array
+ # *****************************************************************************************
+ 
+ 
 .ent place_instructions
 place_instructions:
     # pushes to stack
@@ -234,7 +244,7 @@ place_instructions:
 	sll $t1, $s1, 2	# shifts for placing in array
 	add $t1, $s0, $t1  # adds offset
 	sw $t0, 0($t1) # place in instruction array
-	addi $s0, $s0, 1
+	addi $s1, $s1, 1
 	
 	beq $t0, 0x240000, end_place	# if halt, end
 	j place_in_array
@@ -260,22 +270,25 @@ get_instruction:
     sw $ra, 12($sp)
     
     # load counter
-    li $s0, 6
+    li $s0, 5
+    move $s1, $zero
     read_from_BT:
 	# reads byte from BT
 	jal receive_byte
 	move $a0, $v0	# moves output from recieve_byte to ascii_to_hex input
-	# jal ascii_to_hex
+	jal ascii_to_hex
 
 	# moves BT output to temp reg
 	move $t0, $v0
 	
 	# places digits in their place in the opcode
-	mul $t1, $s0, 4	# multiplies counter by 4
-	sllv $s1, $t0, $t1  # shifts by counter x 4
+	li $t3, 4
+	mul $t1, $s0, $t3	# multiplies counter by 4
+	sllv $t0, $t0, $t1  # shifts by counter x 4
+	or $s1, $s1, $t0
 	
 	addi $s0, $s0, -1    # decrement counter
-	bnez $s0, read_from_BT 
+	bgez $s0, read_from_BT 
     
     # move to output
     move $v0, $s1
@@ -294,16 +307,18 @@ get_instruction:
 .ent ascii_to_hex
 ascii_to_hex:
     move $t0, $a0	# moves input to temp reg
-    addi $t0, $t0, -30 # moves ascii 0-9 to hex 0-9
+    li $t1, 0x30
+    sub $t0, $t0, $t1 # moves ascii 0-9 to hex 0-9
     
     sltiu $t1, $t0, 0xA	# if less than A, return to caller
     bgtz $t1, return	# skips if 0-9
     
-    addi $t0, $t0, -7	# if greater than A, subtract 7 more
+    li $t1, 0x7
+    sub $t0, $t0, $t1	# if greater than A, subtract 7 more
     
     return:
     # moves to output
-    move $v0, $t1
+    move $v0, $t0
     jr $ra
     
 .end ascii_to_hex
