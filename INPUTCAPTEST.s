@@ -5,6 +5,9 @@
 clear_disp2: .byte 0x1B, '[', 'j', 0x00 
 disp_motors_off: .asciiz "Motors off"
 char_num: .byte 0,0,0,0
+x_label: .asciiz "X:"
+y_label: .asciiz "Y:"
+    
 .Text
    .include "BUTTON.s" 
    .include "SPI.s"
@@ -28,11 +31,20 @@ char_num: .byte 0,0,0,0
 #     BEQ $t0, $v1, TURNOFF
     
     JAL send_spi
-    MOVE $a1, $v0 # Y data
+    
+    MOVE $a1, $v0 # x data
     JAL convert_
+    LA $a0, x_label
+    JAL send
     LA $a0, char_num
     JAL send
-    MOVE $s1, $v1 # X data
+    
+    MOVE $a1, $v1 # y data
+    JAL convert_
+    LA $a0, y_label
+    JAL send
+    LA $a0, char_num
+    JAL send
     J while
     
    TURNON:
