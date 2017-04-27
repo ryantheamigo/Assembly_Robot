@@ -44,12 +44,45 @@ B6:     .word   316      # 144
 
     
 timer3_flag: .word 0
-							                  # riff
-# song_freqs: .byte 28, 0, 28, 0, 56, 0, 28, 0, 60, 0, 28, 0, 56, 0, 48, 0, 28, 0, 48, 0, 40, 0, 36, 0, 40, 0, 48, 0, 36, 0, 28, 0, 20, 0
-  song_freqs: .byte 20, 0, 20, 0, 20, 0, 4, 0, 32, 0, 20, 0, 4, 0, 32, 0, 20, 0    
+							               
+# StarWars
+# song_freqs: .byte 20, 0, 20, 0, 20, 0, 4, 0, 32, 0, 20, 0, 4, 0, 32, 0, 20, 0    
+# song_times: .byte 20, 2, 20, 2, 20, 2, 8, 2, 5, 4, 24, 2, 8, 2, 5, 4, 24, 50 
     
-song_times: .byte 20, 2, 20, 2, 20, 2, 10, 1, 10, 1, 24, 2, 10, 1, 10, 1, 24, 2 
-
+# 88 notes
+# mahna mahna	  # descent ( 8 notes )
+song_freqs: .byte 40, 0, 36, 0, 32, 0, 28, 0
+		  # first riff ( 10 notes )
+	    .byte 60, 0, 72, 0, 80, 0, 68, 0, 52, 0  
+		  # descent ( 8 notes )
+	    .byte 40, 0, 36, 0, 32, 0, 28, 0
+		  # second riff ( 8 notes )
+	    .byte 60, 0, 72, 0, 80, 0, 68, 0
+		  # descent ( 8 notes )
+	    .byte 40, 0, 36, 0, 32, 0, 28, 0
+		  # third riff ( 10 notes )
+	    .byte 60, 0, 72, 0, 80, 0, 68, 0, 52, 0
+		  # fourth riff ( 36 notes ) 
+	    .byte 60, 0, 68, 0, 52, 0, 60, 0, 68, 0, 52, 0, 60, 0, 68, 0, 52, 0
+	    .byte 60, 0, 68, 0, 52, 0, 40, 0, 32, 0, 52, 0, 52, 0, 52, 0, 52, 0
+	    
+	    # descent
+song_times: .byte 3, 1, 3, 1, 3, 1, 3, 5
+	    # first
+	    .byte 3, 1, 10, 1, 3, 1, 3, 1, 3, 12
+	    # descent
+	    .byte 3, 1, 3, 1, 3, 1, 3, 5
+	    # second
+	    .byte 3, 3, 3, 3, 3, 3, 7, 12
+	    # descent
+	    .byte 3, 1, 3, 1, 3, 1, 3, 5
+	    # third
+	    .byte 3, 1, 10, 1, 3, 1, 3, 1, 3, 12
+	    # fourth 
+	    .byte 3, 1, 3, 1, 3, 5, 3, 1, 3, 1, 3, 5, 3, 1, 3, 1, 3, 5, 
+	    .byte 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1, 3, 1 
+	    
+	    
     
 .text
 
@@ -101,7 +134,7 @@ main:
         addi $s2, $s2, 1
 
         # Set the amount of notes in the second arguement
-        beq $s2, 26, begin_song
+        beq $s2, 88, begin_song
 
         # Play the next note
         j loop
